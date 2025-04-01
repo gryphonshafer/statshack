@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS quiz (
     last_modified TEXT    NOT NULL DEFAULT ( STRFTIME( '%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME' ) ),
     created       TEXT    NOT NULL DEFAULT ( STRFTIME( '%Y-%m-%d %H:%M:%f', 'NOW', 'LOCALTIME' ) )
 );
+CREATE UNIQUE INDEX IF NOT EXISTS quiz_instance ON quiz ( meet_id, bracket, name );
 CREATE TRIGGER IF NOT EXISTS quiz_last_modified
     AFTER UPDATE OF
         meet_id,

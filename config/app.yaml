@@ -11,4 +11,5 @@ default:
         session:
             cookie_name: statshack_session
     omniframe: ../omniframe
+    meet_draw_files: local/meets
 optional_include: local/config.yaml

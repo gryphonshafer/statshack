@@ -7,6 +7,8 @@ sub startup ($self) {
 
     my $all = $self->routes;
     $all->any('/')->to('main#home');
+    $all->any('/meet/:meet_id')->to('meet#state');
+    $all->any('/meet/:meet_id/record/:bracket_name/:quiz_name')->to('meet#record');
     $all->any( '/*null' => { null => undef } => sub ($c) { $c->redirect_to('/') } );
 }
 

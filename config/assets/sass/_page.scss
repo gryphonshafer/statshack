@@ -1,4 +1,8 @@
 body {
     font-family     : sans-serif;
     background-color: aliceblue;
+
+    a.active_quiz {
+        font-weight: bold;
+    }
 }

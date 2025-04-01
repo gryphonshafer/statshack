@@ -1,0 +1,101 @@
+[% page.title = 'StatsHack: Record Quiz Data' %]
+<h1>[% page.title %]</h1>
+
+[% IF state AND state.brackets %]
+    [% this_quiz = {} %]
+
+    <table>
+        <thead>
+            <tr>
+                [% FOR bracket IN state.brackets %]
+                    <th>[% bracket.name.substr( 0, 1 ) %]</th>
+                [% END %]
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                [% FOR bracket IN state.brackets %]
+                    <td>
+                        [% FOR quiz IN bracket.quizzes %]
+                            [%
+                                active_quiz = bracket.name == bracket_name AND quiz.name == quiz_name;
+                                IF active_quiz;
+                                    this_quiz = quiz;
+                                END;
+                            %]
+                            <a [% IF active_quiz%]class="active_quiz"[% END %] href="[% c.url_for(
+                                '/meet/' _ meet_id _ '/record/' _ bracket.name _ '/' _ quiz.name
+                            ) %]">[% quiz.name %]</a>[% UNLESS loop.last %]<br>[% END %]
+                        [% END %]
+                    </td>
+                [% END %]
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Bracket: [% bracket_name %]<br>
+        Quiz: [% quiz_name %]
+    </p>
+
+    <form method="post">
+        <table>
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Score</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOR team IN this_quiz.teams %]
+                    <tr>
+                        <td>[% team.name %]</td>
+                        <td><input type="text" name="[% team.name %] score"
+                            value="0"
+                            tabindex="[% loop.count %]"></td>
+                        <td><input type="text" name="[% team.name %] position"
+                            value="0"
+                            tabindex="[% loop.count + this_quiz.teams.size %]"></td>
+                    </tr>
+                [% END %]
+            </tbody>
+        </table>
+
+        [% tab_index = this_quiz.teams.size * 2 %]
+        [% FOR team IN this_quiz.teams %]
+            <div>
+                <b>[% team.name %]</b>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Quizzer</th>
+                            <th>Correct</th>
+                            <th>Incorrect</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOR quizzer IN team.quizzers %]
+                            <tr>
+                                <td>[% quizzer %]</td>
+                                <td><input type="text" name="[% quizzer.name %] correct"
+                                    value="0"
+                                    tabindex="[% tab_index = tab_index + 1; tab_index %]"></td>
+                                <td><input type="text" name="[% quizzer.name %] incorrect"
+                                    value="0"
+                                    tabindex="[% tab_index = tab_index + 1; tab_index %]"></td>
+                            </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+            </div>
+        [% END %]
+
+        <input type="hidden" name="submitted" value="1">
+        <input type="submit" value="Save"
+            tabindex="[% tab_index = tab_index + 1; tab_index %]">
+    </form>
+[% ELSE %]
+    <p><i>No brackets found.</i></p>
+[% END %]

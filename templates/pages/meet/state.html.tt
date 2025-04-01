@@ -1,0 +1,36 @@
+[% page.title = 'StatsHack: Meet State' %]
+<h1>[% page.title %]</h1>
+
+[% IF draw AND draw.brackets %]
+    [% FOR bracket IN draw.brackets %]
+        <h2>Bracket: [% bracket.name %]</h2>
+
+        [% IF bracket.quizzes AND bracket.quizzes.size > 0 %]
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz</th>
+                        <th>Teams</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    [% FOR quiz IN bracket.quizzes %]
+                        <tr>
+                            <td>
+                                <a href="[% c.url_for(
+                                    '/meet/' _ meet_id _ '/record/' _ bracket.name _ '/' _ quiz.name
+                                ) %]"
+                                    >Quiz [% quiz.name %]</a>
+                            </td>
+                            <td>[% quiz.teams.join(', ') %]</td>
+                        </tr>
+                    [% END %]
+                </tbody>
+            </table>
+        [% ELSE %]
+            <p><i>No quizzes found.</i></p>
+        [% END %]
+    [% END %]
+[% ELSE %]
+    <p><i>No draw found.</i></p>
+[% END %]
