@@ -1,12 +1,12 @@
 package StatsHack::Control::Main;
 
 use exact -conf, 'Mojolicious::Controller';
+use StatsHack::Model::Meet;
 
 sub home ($self) {
     $self->stash(
-        seasons => StatsHack::Model::Season->new->seasons,
-        usage   => StatsHack::Model::Memory->new->usage,
-    ) if ( $self->stash('user') );
+        meets => StatsHack::Model::Meet->new->meets,
+    );
 }
 
 1;

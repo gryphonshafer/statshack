@@ -3,7 +3,7 @@ package StatsHack::Control;
 use exact 'Omniframe::Control';
 
 sub startup ($self) {
-    $self->setup;
+    $self->setup( skip => [ qw( document sockets ) ] );
 
     my $all = $self->routes;
     $all->any('/')->to('main#home');

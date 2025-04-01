@@ -2,4 +2,19 @@
 
 <h1>[% page.title %]</h1>
 
-<p>Hello world...</p>
+[% IF meets AND meets.size > 0 %]
+    <table>
+        <thead>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Start</th>
+        </thead>
+        <tbody>
+            [% FOR meet IN meets %]
+                <td><a href="[% c.url_for( '/meet/' _ meet.meet_id ) %]">[% meet.name %]</a></td>
+                <td>[% meet.location %]</td>
+                <td>[% meet.start %]</td>
+            [% END %]
+        </tbody>
+    </table>
+[% END %]
