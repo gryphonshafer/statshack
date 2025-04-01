@@ -1,0 +1,14 @@
+---
+preinclude: ../omniframe/config/app.yaml
+default:
+    bcrypt:
+        salt: 51q6XXEQ2eZk2d95
+    libs: ../omniframe/lib
+    mojo_app_lib: StatsHack::Control
+    mojolicious:
+        secrets:
+            - 90aDya.epAJxUqxykAS436Nw879zd2ZP
+        session:
+            cookie_name: statshack_session
+    omniframe: ../omniframe
+optional_include: local/config.yaml

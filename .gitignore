@@ -1,35 +1,38 @@
-!Build/
-.last_cover_stats
-/META.yml
-/META.json
-/MYMETA.*
-*.o
-*.pm.tdy
-*.bs
+# Local Files
+local/
+
+# Temporary Files
+*.tmp
+
+# Archives
+*.gz
+*.tar
+*.tgz
+*.zip
+
+# MacOS
+.DS_Store
+
+# Sublime Projects
+*.sublime-project
+*.sublime-workspace
+
+# Prove
+.prove
 
 # Devel::Cover
 cover_db/
 
 # Devel::NYTProf
+nytprof/
 nytprof.out
 
-# Dist::Zilla
-/.build/
+# Dest Status
+/.dest/
 
-# Module::Build
-_build/
-Build
-Build.bat
+# GitHub Actions
+/src/
 
-# Module::Install
-inc/
-
-# ExtUtils::MakeMaker
-/blib/
-/_eumm/
-/*.gz
-/Makefile
-/Makefile.old
-/MANIFEST.bak
-/pm_to_blib
-/*.zip
+# Application
+/static/build/
+/static/externals/
