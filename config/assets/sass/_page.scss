@@ -1,25 +1,53 @@
 :root {
-    font-size: 14px;
+    font-size: 15px;
 }
 
 body {
+    position        : relative;
+    margin          : 1em;
     font-family     : sans-serif;
     background-color: aliceblue;
 
-    a.active_quiz {
-        font-weight: bold;
+    nav {
+        position: absolute;
+        top     : 0;
+        right   : 0;
+
+        ul {
+            margin: 0;
+
+            li {
+                list-style: none;
+            }
+        }
     }
 
-    table td:has(input) {
-        background-color: red;
-        padding: 0;
+    main {
+        div.inline {
+            display       : inline-block;
+            vertical-align: top;
+            margin-right  : 1em;
 
-        input {
-            border    : none;
-            padding   : 0.25em 0.25em 0.25em 0;
-            width     : 6em;
-            text-align: right;
-            direction : rtl;
+            & > table:first-child,
+            & > p:first-child {
+                    margin-top: 0;
+            }
+        }
+
+        a.active_quiz {
+            font-weight: bold;
+        }
+
+        table td:has(input) {
+            padding: 0;
+
+            input {
+                border    : none;
+                padding   : 0.125em 0.5em 0.125em 0;
+                width     : 4.5em;
+                text-align: right;
+                direction : rtl;
+            }
         }
     }
 }

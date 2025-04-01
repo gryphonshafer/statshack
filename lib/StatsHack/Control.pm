@@ -5,7 +5,9 @@ use exact 'Omniframe::Control';
 sub startup ($self) {
     $self->setup( skip => [ qw( document sockets ) ] );
 
-    my $all = $self->routes;
+    my $all = $self->routes->under( sub ($c) {
+        $c->stash( page => { wrappers => ['page.html.tt'] } );
+    } );
     $all->any('/')->to('main#home');
     $all->any('/meet/:meet_id')->to('meet#state');
     $all->any('/meet/:meet_id/record/:bracket_name/:quiz_name')->to('meet#record');

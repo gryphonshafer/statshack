@@ -1,0 +1,19 @@
+[%
+    UNLESS page.title;
+        page.title = 'StatsHack';
+    ELSE;
+        page.title = 'StatsHack: ' _ page.title;
+    END;
+%]
+
+<header>
+    <h1>[% page.title %]</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="[% c.url_for('/') %]">Home</a></li>
+    </ul>
+</nav>
+
+<main>[% content %]</main>
