@@ -4,15 +4,10 @@ use exact 'Omniframe::Control';
 
 sub startup ($self) {
     $self->setup;
-    $self->routes->any( '/*null' => { null => undef } => sub ($c) {
-        $c->stash(
-            package => __PACKAGE__,
-            now     => scalar(localtime),
-            copy    => "\xa9",
-            input   => $c->param('input'),
-        );
-        $c->render( template => 'example/index' );
-    } );
+
+    my $all = $self->routes;
+    $all->any('/')->to('main#home');
+    $all->any( '/*null' => { null => undef } => sub ($c) { $c->redirect_to('/') } );
 }
 
 1;
