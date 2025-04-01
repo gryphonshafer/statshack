@@ -49,20 +49,43 @@
             </thead>
             <tbody>
                 [% FOR team IN this_quiz.teams %]
+                    [% team_name = team.name %]
                     <tr>
                         <td>[% team.name %]</td>
-                        <td><input type="text" name="[% team.name %] score"
-                            value="0"
+                        <td><input
+                            type="number"
+                            step="1"
+                            min="0"
+                            pattern="[0-9]*"
+                            inputmode="numeric"
+                            name="[% param([ 'teams', team.name, 'score' ]) %]"
+                            value="[% this_quiz.stats.teams.$team_name.score || 0 %]"
                             tabindex="[% loop.count %]"></td>
-                        <td><input type="text" name="[% team.name %] position"
-                            value="0"
+                        <td><input
+                            type="number"
+                            step="1"
+                            min="0"
+                            pattern="[0-9]*"
+                            inputmode="numeric"
+                            name="[% param([ 'teams', team.name, 'position' ]) %]"
+                            value="[% this_quiz.stats.teams.$team_name.position || 0 %]"
                             tabindex="[% loop.count + this_quiz.teams.size %]"></td>
                     </tr>
                 [% END %]
             </tbody>
         </table>
 
-        [% tab_index = this_quiz.teams.size * 2 %]
+        [%
+            tab_index = this_quiz.teams.size * 2;
+
+            BLOCK tab_index_incr;
+                tab_index = tab_index + 1;
+                tab_index;
+            END;
+
+            MACRO param(array_ref) array_ref.join('|') | url;
+        %]
+
         [% FOR team IN this_quiz.teams %]
             <div>
                 <b>[% team.name %]</b>
@@ -79,12 +102,24 @@
                         [% FOR quizzer IN team.quizzers %]
                             <tr>
                                 <td>[% quizzer %]</td>
-                                <td><input type="text" name="[% quizzer.name %] correct"
+                                <td><input
+                                    type="number"
+                                    step="1"
+                                    min="0"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    name="[% param([ 'quizzers', quizzer, 'correct' ]) %]"
+                                    value="[% this_quiz.stats.quizzers.$quizzer.correct || 0 %]"
+                                    tabindex="[% PROCESS tab_index_incr %]"></td>
+                                <td><input
+                                    type="number"
+                                    step="1"
+                                    min="0"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    value="[% this_quiz.stats.quizzers.$quizzer.incorrect || 0 %]"
                                     value="0"
-                                    tabindex="[% tab_index = tab_index + 1; tab_index %]"></td>
-                                <td><input type="text" name="[% quizzer.name %] incorrect"
-                                    value="0"
-                                    tabindex="[% tab_index = tab_index + 1; tab_index %]"></td>
+                                    tabindex="[% PROCESS tab_index_incr %]"></td>
                             </tr>
                         [% END %]
                     </tbody>
@@ -93,8 +128,7 @@
         [% END %]
 
         <input type="hidden" name="submitted" value="1">
-        <input type="submit" value="Save"
-            tabindex="[% tab_index = tab_index + 1; tab_index %]">
+        <input type="submit" value="Save" tabindex="[% PROCESS tab_index_incr %]">
     </form>
 [% ELSE %]
     <p><i>No brackets found.</i></p>

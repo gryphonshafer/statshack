@@ -2,6 +2,8 @@ package StatsHack::Control::Meet;
 
 use exact -conf, 'Mojolicious::Controller';
 use StatsHack::Model::Meet;
+use StatsHack::Model::Quiz;
+use Mojo::Util 'url_unescape';
 
 sub state ($self) {
     $self->stash( draw => StatsHack::Model::Meet->new->load( $self->param('meet_id') )->draw );
@@ -9,10 +11,34 @@ sub state ($self) {
 
 sub record ($self) {
     if ( $self->param('submitted') ) {
-        $self->warn( $self->req->params->to_hash );
-    }
+        my $stats = {};
+        $stats->{ $_->{class} }{ $_->{name} }{ $_->{type} } = $_->{value} for (
+            map {
+                my $param = {};
+                @$param{ qw( value class name type ) } = @$_;
+                $param;
+            }
+            grep { @$_ > 2 and ( $_->[1] eq 'quizzers' or $_->[1] eq 'teams' ) }
+            map { [ $self->req->param($_), split( /\|/, url_unescape($_) ) ] }
+            $self->req->params->names->@*
+        );
 
-    $self->stash( state => StatsHack::Model::Meet->new->load( $self->param('meet_id') )->state );
+        StatsHack::Model::Quiz->new->record( {
+            meet_id => $self->param('meet_id'),
+            bracket => $self->param('bracket_name'),
+            name    => $self->param('quiz_name'),
+            stats   => $stats,
+        } );
+
+        $self->redirect_to(
+            '/meet/' . $self->param('meet_id') .
+            '/record/' . $self->param('bracket_name') .
+            '/' . $self->param('quiz_name')
+        );
+    }
+    else {
+        $self->stash( state => StatsHack::Model::Meet->new->load( $self->param('meet_id') )->state );
+    }
 }
 
 1;
