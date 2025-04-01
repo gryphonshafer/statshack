@@ -120,8 +120,8 @@
                                         min="0"
                                         pattern="[0-9]*"
                                         inputmode="numeric"
+                                        name="[% param([ 'quizzers', quizzer, 'incorrect' ]) %]"
                                         value="[% this_quiz.stats.quizzers.$quizzer.incorrect || 0 %]"
-                                        value="0"
                                         tabindex="[% PROCESS tab_index_incr %]"></td>
                                 </tr>
                             [% END %]
