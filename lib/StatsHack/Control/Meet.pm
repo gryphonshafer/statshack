@@ -5,6 +5,10 @@ use StatsHack::Model::Meet;
 use StatsHack::Model::Quiz;
 use Mojo::Util 'url_unescape';
 
+sub roster ($self) {
+    $self->stash( draw => StatsHack::Model::Meet->new->load( $self->param('meet_id') )->draw );
+}
+
 sub state ($self) {
     $self->stash( state => StatsHack::Model::Meet->new->load( $self->param('meet_id') )->state );
 }
@@ -53,6 +57,10 @@ This class is a subclass of L<Mojolicious::Controller> and provides handlers
 for "Meet" actions.
 
 =head1 METHODS
+
+=head2 roster
+
+Handler for the meet roster page.
 
 =head2 state
 

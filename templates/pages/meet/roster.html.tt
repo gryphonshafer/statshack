@@ -1,0 +1,18 @@
+[% page.title = 'Roster' %]
+
+[% IF draw AND draw.roster %]
+    <div class="roster_teams">
+        [% FOR team IN draw.roster.sort_by('name') %]
+            <div class="roster_team">
+                <b>[% team.name %]</b>
+                <ul>
+                    [% FOR quizzer IN team.quizzers %]
+                        <li>[% quizzer %]</li>
+                    [% END %]
+                </ul>
+            </div>
+        [% END %]
+    </div>
+[% ELSE %]
+    <p><i>No roster found.</i></p>
+[% END %]

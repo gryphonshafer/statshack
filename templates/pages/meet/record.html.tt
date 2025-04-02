@@ -37,8 +37,8 @@
 
         <div class="inline">
             <p>
-                Bracket: [% bracket_name %]<br>
-                Quiz: [% quiz_name %]
+                Bracket: <b>[% bracket_name %]</b><br>
+                Quiz: <b>[% quiz_name %]</b>
             </p>
 
             <table>
