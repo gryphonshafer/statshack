@@ -11,6 +11,7 @@ sub startup ($self) {
     $all->any('/')->to('main#home');
     $all->any('/meet/:meet_id')->to('meet#state');
     $all->any('/meet/:meet_id/record/:bracket_name/:quiz_name')->to('meet#record');
+    $all->any( '/meet/:meet_id/stats/' . $_ )->to( 'stats#' . $_ ) for ( qw( teams quizzers ) );
     $all->any( '/*null' => { null => undef } => sub ($c) { $c->redirect_to('/') } );
 }
 

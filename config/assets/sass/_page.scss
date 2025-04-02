@@ -68,6 +68,10 @@ body {
             tr.has_stats td {
                 background-color: #cfc;
             }
+
+            td.right {
+                text-align: right;
+            }
         }
     }
 }

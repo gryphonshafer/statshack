@@ -1,0 +1,61 @@
+[% page.title = 'Quizzer Stats' %]
+
+[% IF stats.quizzes.size > 0 %]
+    <h2>Full Meet</h2>
+    [% BLOCK table %]
+        <table>
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Quizzer</th>
+                    <th>Average</th>
+                    <th>Points</th>
+                    <th>Quizzes</th>
+                    <th>Correct</th>
+                    <th>Incorrect</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOR quizzer IN quizzers
+                    .sort_by('name')
+                    .nsort_by( 'correct', 'desc' )
+                    .nsort_by('incorrect')
+                    .nsort_by( 'points', 'desc' )
+                %]
+                    <tr>
+                        <td class="right">[% loop.count %]</td>
+                        <td>[% quizzer.name %]</td>
+                        <td class="right">[%
+                            IF quizzer.points.defined AND quizzer.quizzes.defined;
+                                quizzer.average | format('%0.2f');
+                            END;
+                        %]</td>
+                        <td class="right">[% quizzer.points %]</td>
+                        <td class="right">[% quizzer.quizzes %]</td>
+                        <td class="right">[% quizzer.correct %]</td>
+                        <td class="right">[% quizzer.incorrect %]</td>
+                    </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+    [% PROCESS table, quizzers = stats.quizzers %]
+
+    [% FOR bracket IN stats.brackets %]
+        <h2>Bracket: [% bracket %]</h2>
+        [%
+            by_bracket = [];
+            FOR quizzer IN stats.quizzers;
+                by_bracket.push({
+                    name    => quizzer.name,
+                    average => quizzer.by_bracket.$bracket.average,
+                    points  => quizzer.by_bracket.$bracket.points,
+                    quizzes => quizzer.by_bracket.$bracket.quizzes,
+                });
+            END;
+            PROCESS table, quizzers = by_bracket;
+        %]
+    [% END %]
+[% ELSE %]
+    <p><i>No statistics available.</i></p>
+[% END %]

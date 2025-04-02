@@ -1,0 +1,52 @@
+[% page.title = 'Team Stats' %]
+
+[% IF stats.quizzes.size > 0 %]
+    <h2>Full Meet</h2>
+    [% BLOCK table %]
+        <table>
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Team</th>
+                    <th>Points</th>
+                    <th>Quizzes</th>
+                    <th>Average</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOR team IN teams.sort_by('name').nsort_by( 'points', 'desc' ) %]
+                    <tr>
+                        <td class="right">[% loop.count %]</td>
+                        <td>[% team.name %]</td>
+                        <td class="right">[% team.points %]</td>
+                        <td class="right">[% team.quizzes %]</td>
+                        <td class="right">[%
+                            IF team.points.defined AND team.quizzes.defined;
+                                team.average | format('%0.2f');
+                            END;
+                        %]</td>
+                    </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+    [% PROCESS table, teams = stats.teams %]
+
+    [% FOR bracket IN stats.brackets %]
+        <h2>Bracket: [% bracket %]</h2>
+        [%
+            by_bracket = [];
+            FOR team IN stats.teams;
+                by_bracket.push({
+                    name    => team.name,
+                    average => team.by_bracket.$bracket.average,
+                    points  => team.by_bracket.$bracket.points,
+                    quizzes => team.by_bracket.$bracket.quizzes,
+                });
+            END;
+            PROCESS table, teams = by_bracket;
+        %]
+    [% END %]
+[% ELSE %]
+    <p><i>No statistics available.</i></p>
+[% END %]

@@ -1,3 +1,4 @@
+[% PROCESS macros %]
 [% IF meets AND meets.size > 0 %]
     <table>
         <thead>
@@ -12,7 +13,7 @@
                 <tr>
                     <td><a href="[% c.url_for( '/meet/' _ meet.meet_id ) %]">[% meet.name %]</a></td>
                     <td>[% meet.location %]</td>
-                    <td>[% meet.start %]</td>
+                    <td>[% time( meet.start, '%a, %b %-d, %Y at %-I:%M %p %Z' ) %]</td>
                 </tr>
             [% END %]
         </tbody>
