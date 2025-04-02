@@ -8,6 +8,11 @@ body {
     font-family     : sans-serif;
     background-color: aliceblue;
 
+    h1 { font-size: 1.75rem }
+    h2 { font-size: 1.5rem }
+    h3 { font-size: 1.25rem }
+    h4 { font-size: 1rem }
+
     nav {
         position: absolute;
         top     : 0;
@@ -38,15 +43,30 @@ body {
             font-weight: bold;
         }
 
-        table td:has(input) {
-            padding: 0;
+        table {
+            td:has(input) {
+                padding: 0;
 
-            input {
-                border    : none;
-                padding   : 0.125em 0.5em 0.125em 0;
-                width     : 4.5em;
-                text-align: right;
-                direction : rtl;
+                input {
+                    border    : none;
+                    padding   : 0.125em 0.5em 0.125em 0;
+                    width     : 4.5em;
+                    text-align: right;
+                    direction : rtl;
+                }
+            }
+
+            tr.no_stats {
+                td {
+                    background-color: #ffc;
+                }
+                td:first-child {
+                    font-weight: bold;
+                }
+            }
+
+            tr.has_stats td {
+                background-color: #cfc;
             }
         }
     }

@@ -6,7 +6,7 @@ use StatsHack::Model::Quiz;
 use Mojo::Util 'url_unescape';
 
 sub state ($self) {
-    $self->stash( draw => StatsHack::Model::Meet->new->load( $self->param('meet_id') )->draw );
+    $self->stash( state => StatsHack::Model::Meet->new->load( $self->param('meet_id') )->state );
 }
 
 sub record ($self) {

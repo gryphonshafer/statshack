@@ -1,7 +1,7 @@
 [% page.title = 'Meet State' %]
 
-[% IF draw AND draw.brackets %]
-    [% FOR bracket IN draw.brackets %]
+[% IF state AND state.brackets %]
+    [% FOR bracket IN state.brackets %]
         <h2>Bracket: [% bracket.name %]</h2>
 
         [% IF bracket.quizzes AND bracket.quizzes.size > 0 %]
@@ -14,14 +14,18 @@
                 </thead>
                 <tbody>
                     [% FOR quiz IN bracket.quizzes %]
-                        <tr>
+                        <tr class="[% IF quiz.stats %]has_stats[% ELSE %]no_stats[% END %]">
                             <td>
                                 <a href="[% c.url_for(
                                     '/meet/' _ meet_id _ '/record/' _ bracket.name _ '/' _ quiz.name
                                 ) %]"
                                     >Quiz [% quiz.name %]</a>
                             </td>
-                            <td>[% quiz.teams.join(', ') %]</td>
+                            <td>
+                                [% FOR team IN quiz.teams %]
+                                    [% team.name %][% UNLESS loop.last %], [% END %]
+                                [% END %]
+                            </td>
                         </tr>
                     [% END %]
                 </tbody>
