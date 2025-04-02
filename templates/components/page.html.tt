@@ -12,7 +12,13 @@
 
 <nav>
     <ul>
-        <li><a href="[% c.url_for('/') %]">Home</a></li>
+        [% IF c.url_for('/') != c.req.url.path.to_string %]
+            <li><a href="[% c.url_for('/') %]">Home</a></li>
+        [% END %]
+
+        [% IF meet_id %]
+            <li><a href="[% c.url_for( '/meet/' _ meet_id ) %]">Meet</a></li>
+        [% END %]
     </ul>
 </nav>
 
