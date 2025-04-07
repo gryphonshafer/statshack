@@ -5,7 +5,7 @@
 
     <form method="post">
         <div class="inline">
-            <table>
+            <table class="quick_links">
                 <thead>
                     <tr>
                         [% FOR bracket IN state.brackets %]
@@ -24,9 +24,16 @@
                                             this_quiz = quiz;
                                         END;
                                     %]
-                                    <a [% IF active_quiz%]class="active_quiz"[% END %] href="[% c.url_for(
-                                        '/meet/' _ meet_id _ '/record/' _ bracket.name _ '/' _ quiz.name
-                                    ) %]">[% quiz.name %]</a>[% UNLESS loop.last %]<br>[% END %]
+
+                                    <a
+                                        class="
+                                            [% IF quiz.stats %]has_stats[% ELSE %]no_stats[% END %]
+                                            [% IF active_quiz %]active_quiz[% END %]
+                                        "
+                                        href="[% c.url_for(
+                                            '/meet/' _ meet_id _ '/record/' _ bracket.name _ '/' _ quiz.name
+                                        ) %]"
+                                    >[% quiz.name %]</a>[% UNLESS loop.last %]<br>[% END %]
                                 [% END %]
                             </td>
                         [% END %]
@@ -41,41 +48,45 @@
                 Quiz: <b>[% quiz_name %]</b>
             </p>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Team</th>
-                        <th>Score</th>
-                        <th>Position</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    [% FOR team IN this_quiz.teams %]
-                        [% team_name = team.name %]
+            [% IF this_quiz.teams.size > 0 %]
+                <table>
+                    <thead>
                         <tr>
-                            <td>[% team.name %]</td>
-                            <td><input
-                                type="number"
-                                step="1"
-                                min="0"
-                                pattern="[0-9]*"
-                                inputmode="numeric"
-                                name="[% param([ 'teams', team.name, 'score' ]) %]"
-                                value="[% this_quiz.stats.teams.$team_name.score || 0 %]"
-                                tabindex="[% loop.count %]"></td>
-                            <td><input
-                                type="number"
-                                step="1"
-                                min="0"
-                                pattern="[0-9]*"
-                                inputmode="numeric"
-                                name="[% param([ 'teams', team.name, 'position' ]) %]"
-                                value="[% this_quiz.stats.teams.$team_name.position || 0 %]"
-                                tabindex="[% loop.count + this_quiz.teams.size %]"></td>
+                            <th>Team</th>
+                            <th>Score</th>
+                            <th>Position</th>
                         </tr>
-                    [% END %]
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        [% FOR team IN this_quiz.teams %]
+                            [% team_name = team.name %]
+                            <tr>
+                                <td>[% team.name %]</td>
+                                <td><input
+                                    type="number"
+                                    step="1"
+                                    min="0"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    name="[% param([ 'teams', team.name, 'score' ]) %]"
+                                    value="[% this_quiz.stats.teams.$team_name.score || 0 %]"
+                                    tabindex="[% loop.count %]"></td>
+                                <td><input
+                                    type="number"
+                                    step="1"
+                                    min="0"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    name="[% param([ 'teams', team.name, 'position' ]) %]"
+                                    value="[% this_quiz.stats.teams.$team_name.position || 0 %]"
+                                    tabindex="[% loop.count + this_quiz.teams.size %]"></td>
+                            </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+            [% ELSE %]
+                <p><i>No teams assigned.</i></p>
+            [% END %]
         </div>
 
         <div class="inline">
@@ -131,8 +142,10 @@
             [% END %]
         </div>
 
-        <input type="hidden" name="submitted" value="1">
-        <input type="submit" value="Save" tabindex="[% PROCESS tab_index_incr %]">
+        [% IF this_quiz.teams.size > 0 %]
+            <input type="hidden" name="submitted" value="1">
+            <input type="submit" value="Save" tabindex="[% PROCESS tab_index_incr %]">
+        [% END %]
     </form>
 [% ELSE %]
     <p><i>No brackets found.</i></p>

@@ -11,7 +11,7 @@
 </header>
 
 [% IF c.url_for('/') != c.req.url.path.to_string %]
-    <nav>
+    <nav class="no_print">
         <ul>
             <li><a href="[% c.url_for('/') %]">Home</a></li>
             [% IF meet_id %]

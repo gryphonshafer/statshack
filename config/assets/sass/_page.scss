@@ -94,5 +94,33 @@ body {
                 }
             }
         }
+
+        table.quick_links {
+            th, td {
+                text-align: center;
+            }
+
+            td {
+                a {
+                    text-decoration: none;
+                    color: blue;
+
+                    &.has_stats {
+                        color     : green;
+                        font-style: italic;
+                    }
+
+                    &.active_quiz {
+                        color: red;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media print {
+    .no_print {
+        display: none;
     }
 }
