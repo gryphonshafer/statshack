@@ -12,4 +12,5 @@ default:
             cookie_name: statshack_session
     omniframe: ../omniframe
     meet_draw_files: local/meets
+    scoresheet_template: static/scoresheet.xlsx
 optional_include: local/config.yaml

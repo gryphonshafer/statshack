@@ -1,10 +1,11 @@
 package StatsHack::Model::Meet;
 
 use exact -class, -conf;
+use Excel::XLSX qw( from_xlsx to_xlsx );
 use Mojo::Util 'encode';
 use Omniframe::Util::File 'opath';
 use StatsHack::Model::Quiz;
-use YAML::XS 'Load';
+use YAML::XS qw( Load Dump );
 
 with 'Omniframe::Role::Model';
 
@@ -113,6 +114,43 @@ sub stats ($self) {
     $stats->{brackets} = [ sort keys %$brackets ];
 
     return $stats;
+}
+
+sub scoresheets ( $self, $bracket_name = undef ) {
+    my $workbook_data = from_xlsx( opath( conf->get('scoresheet_template') )->slurp );
+
+    my $worksheet_template = $workbook_data->{worksheets}[0];
+    $workbook_data->{worksheets} = [];
+
+    $worksheet_template->{fit_to_pages}    = [ 1, 1 ];
+    $worksheet_template->{row_heights}[$_] = 19 for ( 1 .. 39 );
+
+    $worksheet_template->{cells}{1}{1}{value} = $self->data->{name};
+    $worksheet_template->{cells}{2}{1}{value} = $self->data->{location};
+
+    my $state = $self->state;
+    for my $bracket ( $state->{brackets}->@* ) {
+        next unless ( not defined $bracket_name or $bracket->{name} eq $bracket_name );
+
+        for my $quiz ( $bracket->{quizzes}->@* ) {
+            my $worksheet = Load( Dump($worksheet_template) );
+
+            $worksheet->{name}                = $quiz->{name};
+            $worksheet->{cells}{2}{19}{value} = $bracket->{name};
+            $worksheet->{cells}{3}{19}{value} = $quiz->{name};
+
+            my $row = 8;
+            for my $team ( $quiz->{teams}->@* ) {
+                $worksheet->{cells}{$row}{4}{value} = $team->{name};
+                $row += 2;
+                $worksheet->{cells}{$row++}{4}{value} = $_ for ( $team->{quizzers}->@* );
+                $row += 9 - $team->{quizzers}->@*;
+            }
+            push( $workbook_data->{worksheets}->@*, $worksheet );
+        }
+    }
+
+    return to_xlsx($workbook_data);
 }
 
 1;

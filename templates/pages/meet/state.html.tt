@@ -4,6 +4,10 @@
     [% FOR bracket IN state.brackets %]
         <h2>Bracket: [% bracket.name %]</h2>
 
+        <a href="[%
+            c.url_for( '/meet/' _ meet_id _ '/scoresheets' ).query( bracket => bracket.name )
+        %]">Scoresheets</a>
+
         [% IF bracket.quizzes AND bracket.quizzes.size > 0 %]
             <table>
                 <thead>

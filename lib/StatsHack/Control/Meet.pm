@@ -45,6 +45,22 @@ sub record ($self) {
     }
 }
 
+sub scoresheets ($self) {
+    my $scoresheets_data = StatsHack::Model::Meet
+        ->new
+        ->load( $self->param('meet_id') )
+        ->scoresheets( $self->param('bracket') );
+
+    $self->res->headers->header(@$_) for (
+        [ 'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ],
+        [ 'Content-Disposition' => 'inline; filename="scoresheets.xlsx"'                               ],
+        [ 'Content-Length'      => length($scoresheets_data)                                           ],
+        [ 'Cache-Control'       => 'no-store, no-cache'                                                ],
+    );
+    $self->res->body($scoresheets_data);
+    $self->rendered;
+}
+
 1;
 
 =head1 NAME
