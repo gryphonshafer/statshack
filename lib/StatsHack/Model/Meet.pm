@@ -48,7 +48,21 @@ sub state ($self) {
 }
 
 sub stats ($self) {
+    my $draw = $self->draw;
+
+    my $quiz_index = 0;
+    my $quizzes_indexed;
+    for my $bracket ( $draw->{brackets}->@* ) {
+        for my $quiz ( $bracket->{quizzes}->@* ) {
+            $quizzes_indexed->{ $bracket->{name} . ' ' . $quiz->{name} } = $quiz_index++;
+        }
+    }
+
     my $stats = { quizzes => [
+        sort {
+            $quizzes_indexed->{ $a->{bracket} . ' ' . $a->{name} } <=>
+            $quizzes_indexed->{ $b->{bracket} . ' ' . $b->{name} }
+        }
         map {
             while ( my $team_name = each $_->{stats}{teams}->%* ) {
                 my $team = $_->{stats}{teams}{$team_name};
@@ -90,25 +104,31 @@ sub stats ($self) {
             my $points = $quiz->{stats}{$type}{ $node->{name} }{points};
 
             $node->{points} += $points;
-            $node->{quizzes}++;
+            push( $node->{quizzes}->@*, $quiz );
 
             $node->{by_bracket}{ $quiz->{bracket} }{points} += $points;
-            $node->{by_bracket}{ $quiz->{bracket} }{quizzes}++;
+            push( $node->{by_bracket}{ $quiz->{bracket} }{quizzes}->@*, $quiz );
 
-            $node->{correct}   += $quiz->{stats}{$type}{ $node->{name} }{correct}   // 0;
-            $node->{incorrect} += $quiz->{stats}{$type}{ $node->{name} }{incorrect} // 0;
+            if ( $type eq 'quizzers' ) {
+                $node->{correct}   += $quiz->{stats}{$type}{ $node->{name} }{correct}   // 0;
+                $node->{incorrect} += $quiz->{stats}{$type}{ $node->{name} }{incorrect} // 0;
+
+                $node->{by_bracket}{ $quiz->{bracket} }{correct}
+                    += $quiz->{stats}{$type}{ $node->{name} }{correct}   // 0;
+                $node->{by_bracket}{ $quiz->{bracket} }{incorrect}
+                    += $quiz->{stats}{$type}{ $node->{name} }{incorrect} // 0;
+            }
 
             $brackets->{ $quiz->{bracket} } = 1;
         }
 
-        $node->{average} = ( $node->{points} and $node->{quizzes} ) ? $node->{points} / $node->{quizzes} : 0;
-        $_->{average} = $_->{points} / $_->{quizzes}
+        $node->{average} = ( $node->{points} and $node->{quizzes}->@* ) ? $node->{points} / $node->{quizzes}->@* : 0;
+        $_->{average} = $_->{points} / $_->{quizzes}->@*
             for ( map { $node->{by_bracket}{$_} } keys $node->{by_bracket}->%* );
 
         return $node;
     };
 
-    my $draw           = $self->draw;
     $stats->{teams}    = [ map { $type_stats->( 'teams', $_->{name} ) } $draw->{roster}->@* ];
     $stats->{quizzers} = [ map { map { $type_stats->( 'quizzers', $_ ) } $_->{quizzers}->@* } $draw->{roster}->@* ];
     $stats->{brackets} = [ sort keys %$brackets ];

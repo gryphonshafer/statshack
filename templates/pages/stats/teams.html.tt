@@ -3,14 +3,23 @@
 [% IF stats.quizzes.size > 0 %]
     <h2>Full Meet</h2>
     [% BLOCK table %]
+        [%
+            max_quizzes_size = 0;
+            FOR team IN teams;
+                IF team.quizzes.size AND max_quizzes_size < team.quizzes.size;
+                    max_quizzes_size = team.quizzes.size;
+                END;
+            END;
+        %]
         <table>
             <thead>
                 <tr>
                     <th>Position</th>
                     <th>Team</th>
                     <th>Points</th>
-                    <th>Quizzes</th>
+                    <th>Quiz Count</th>
                     <th>Average</th>
+                    [% IF max_quizzes_size > 0 %]<th colspan="[% max_quizzes_size %]">Quizzes</th>[% END %]
                 </tr>
             </thead>
             <tbody>
@@ -19,12 +28,26 @@
                         <td class="right">[% loop.count %]</td>
                         <td>[% team.name %]</td>
                         <td class="right">[% team.points %]</td>
-                        <td class="right">[% team.quizzes %]</td>
+                        <td class="right">[% team.quizzes.size %]</td>
                         <td class="right">[%
                             IF team.points.defined AND team.quizzes.defined;
                                 team.average | format('%0.2f');
                             END;
                         %]</td>
+                        [% IF max_quizzes_size > 0 %]
+                            [% FOR item IN [ 1 .. max_quizzes_size ] %]
+                                [% index = item - 1 %]
+                                <td class="right">
+                                    [% IF team.quizzes.$index %]
+                                        <a href="[% c.url_for(
+                                            '/meet/' _ meet_id _
+                                            '/record/' _ team.quizzes.$index.bracket _
+                                            '/' _ team.quizzes.$index.name
+                                        ) %]">[% team.quizzes.$index.name %]</a>
+                                    [% END %]
+                                </td>
+                            [% END %]
+                        [% END %]
                     </tr>
                 [% END %]
             </tbody>

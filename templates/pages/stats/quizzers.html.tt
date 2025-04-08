@@ -3,6 +3,14 @@
 [% IF stats.quizzes.size > 0 %]
     <h2>Full Meet</h2>
     [% BLOCK table %]
+        [%
+            max_quizzes_size = 0;
+            FOR quizzer IN quizzers;
+                IF quizzer.quizzes.size AND max_quizzes_size < quizzer.quizzes.size;
+                    max_quizzes_size = quizzer.quizzes.size;
+                END;
+            END;
+        %]
         <table>
             <thead>
                 <tr>
@@ -10,9 +18,10 @@
                     <th>Quizzer</th>
                     <th>Average</th>
                     <th>Points</th>
-                    <th>Quizzes</th>
+                    <th>Quiz Count</th>
                     <th>Correct</th>
                     <th>Incorrect</th>
+                    [% IF max_quizzes_size > 0 %]<th colspan="[% max_quizzes_size %]">Quizzes</th>[% END %]
                 </tr>
             </thead>
             <tbody>
@@ -31,9 +40,23 @@
                             END;
                         %]</td>
                         <td class="right">[% quizzer.points %]</td>
-                        <td class="right">[% quizzer.quizzes %]</td>
+                        <td class="right">[% quizzer.quizzes.size %]</td>
                         <td class="right">[% quizzer.correct %]</td>
                         <td class="right">[% quizzer.incorrect %]</td>
+                        [% IF max_quizzes_size > 0 %]
+                            [% FOR item IN [ 1 .. max_quizzes_size ] %]
+                                [% index = item - 1 %]
+                                <td class="right">
+                                    [% IF quizzer.quizzes.$index %]
+                                        <a href="[% c.url_for(
+                                            '/meet/' _ meet_id _
+                                            '/record/' _ quizzer.quizzes.$index.bracket _
+                                            '/' _ quizzer.quizzes.$index.name
+                                        ) %]">[% quizzer.quizzes.$index.name %]</a>
+                                    [% END %]
+                                </td>
+                            [% END %]
+                        [% END %]
                     </tr>
                 [% END %]
             </tbody>
@@ -47,10 +70,12 @@
             by_bracket = [];
             FOR quizzer IN stats.quizzers;
                 by_bracket.push({
-                    name    => quizzer.name,
-                    average => quizzer.by_bracket.$bracket.average,
-                    points  => quizzer.by_bracket.$bracket.points,
-                    quizzes => quizzer.by_bracket.$bracket.quizzes,
+                    name      => quizzer.name,
+                    average   => quizzer.by_bracket.$bracket.average,
+                    points    => quizzer.by_bracket.$bracket.points,
+                    quizzes   => quizzer.by_bracket.$bracket.quizzes,
+                    correct   => quizzer.by_bracket.$bracket.correct,
+                    incorrect => quizzer.by_bracket.$bracket.incorrect,
                 });
             END;
             PROCESS table, quizzers = by_bracket;
