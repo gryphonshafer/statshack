@@ -16,7 +16,7 @@
                 <tr>
                     <th>Position</th>
                     <th>Quizzer</th>
-                    <th>Average</th>
+                    <th>Average &darr;</th>
                     <th>Points</th>
                     <th>Quiz Count</th>
                     <th>Correct</th>
@@ -29,7 +29,7 @@
                     .sort_by('name')
                     .nsort_by( 'correct', 'desc' )
                     .nsort_by('incorrect')
-                    .nsort_by( 'points', 'desc' )
+                    .nsort_by( 'average', 'desc' )
                 %]
                     <tr>
                         <td class="right">[% loop.count %]</td>
@@ -69,14 +69,16 @@
         [%
             by_bracket = [];
             FOR quizzer IN stats.quizzers;
-                by_bracket.push({
-                    name      => quizzer.name,
-                    average   => quizzer.by_bracket.$bracket.average,
-                    points    => quizzer.by_bracket.$bracket.points,
-                    quizzes   => quizzer.by_bracket.$bracket.quizzes,
-                    correct   => quizzer.by_bracket.$bracket.correct,
-                    incorrect => quizzer.by_bracket.$bracket.incorrect,
-                });
+                IF quizzer.by_bracket.$bracket.points.defined;
+                    by_bracket.push({
+                        name      => quizzer.name,
+                        average   => quizzer.by_bracket.$bracket.average,
+                        points    => quizzer.by_bracket.$bracket.points,
+                        quizzes   => quizzer.by_bracket.$bracket.quizzes,
+                        correct   => quizzer.by_bracket.$bracket.correct,
+                        incorrect => quizzer.by_bracket.$bracket.incorrect,
+                    });
+                END;
             END;
             PROCESS table, quizzers = by_bracket;
         %]

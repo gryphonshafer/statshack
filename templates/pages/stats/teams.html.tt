@@ -16,7 +16,7 @@
                 <tr>
                     <th>Position</th>
                     <th>Team</th>
-                    <th>Points</th>
+                    <th>Points &darr;</th>
                     <th>Quiz Count</th>
                     <th>Average</th>
                     [% IF max_quizzes_size > 0 %]<th colspan="[% max_quizzes_size %]">Quizzes</th>[% END %]
@@ -60,12 +60,14 @@
         [%
             by_bracket = [];
             FOR team IN stats.teams;
-                by_bracket.push({
-                    name    => team.name,
-                    average => team.by_bracket.$bracket.average,
-                    points  => team.by_bracket.$bracket.points,
-                    quizzes => team.by_bracket.$bracket.quizzes,
-                });
+                IF team.by_bracket.$bracket.points.defined;
+                    by_bracket.push({
+                        name    => team.name,
+                        average => team.by_bracket.$bracket.average,
+                        points  => team.by_bracket.$bracket.points,
+                        quizzes => team.by_bracket.$bracket.quizzes,
+                    });
+                END;
             END;
             PROCESS table, teams = by_bracket;
         %]
